@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,20 +26,21 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         // Create the appropriate url using the game configuration
         url = urlBuilder();
 
-        // Create a triviarequest using the created url
+        // Create a TriviaRequest using the created url
         TriviaRequest requestTrivia = new TriviaRequest(this);
         requestTrivia.getTrivia(this, url);
     }
 
 
     @Override
-    public void gotTrivia(ArrayList<String> categories) {
+    public void gotTrivia(ArrayList<Trivia> triviaItemsList) {
+        Log.d("trivia", triviaItemsList.get(0).getQuestion());
 
     }
 
     @Override
     public void gotTriviaError(String message) {
-
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     // Method that builds the url String for the JSONRequest

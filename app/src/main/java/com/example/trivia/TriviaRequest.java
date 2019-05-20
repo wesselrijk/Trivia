@@ -26,10 +26,11 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
     }
 
     public interface Callback {
-        void gotTrivia(ArrayList<String> trivias);
+        void gotTrivia(ArrayList<Trivia> trivias);
         void gotTriviaError(String message);
     }
 
+    // A method that gets the Trivia objects from a JSON request
     public void getTrivia(Callback activity, String url) {
         this.activity = activity;
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -39,15 +40,18 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
         queue.add(jsonObjectRequest);
     }
 
-
+    // Handle a VolleyError response
     @Override
     public void onErrorResponse(VolleyError error) {
         activity.gotTriviaError(error.toString());
         Log.d("Volley error message.",error.toString());
     }
 
+    // Handle a successful response
     @Override
     public void onResponse(JSONObject response) {
+
+        // Handle the response code: '0' is success
         int responseCode = 0;
         try {
             responseCode = response.getInt("response_code");
@@ -56,9 +60,11 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
             activity.gotTriviaError(e.getMessage());
         }
 
-        // Checks if the responsecode is succes before getting all trivia
+        // Checks if the ResponseCode is success before getting all trivia
         if (responseCode == 0) {
             JSONArray triviaItems = null;
+
+            // Get the results from the response
             try {
                 triviaItems = response.getJSONArray("results");
             } catch (JSONException e) {
@@ -66,7 +72,41 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
                 activity.gotTriviaError(e.getMessage());
             }
 
-            ArrayList<String> triviaItemsList = new ArrayList<>();
+            // Create an ArrayList to store all the Trivia objects
+            ArrayList<Trivia> triviaItemsList = new ArrayList<>();
+
+            // Iterate over the results of the response
+            for (int i = 0; i < triviaItems.length(); i++) {
+                try {
+
+                    // Get all necessary variables from the results
+                    JSONObject triviaItemJSON = triviaItems.getJSONObject(i);
+                    String category = triviaItemJSON.getString("category");
+                    String type = triviaItemJSON.getString("type");
+                    String difficulty = triviaItemJSON.getString("difficulty");
+                    String question = triviaItemJSON.getString("question");
+                    String correctAnswer = triviaItemJSON.getString("correct_answer");
+                    JSONArray incorrectAnswersJSON = triviaItemJSON.getJSONArray(
+                            "incorrect_answers");
+
+                    // Create a new ArrayList and add the incorrect answers
+                    ArrayList<String> incorrectAnswers = new ArrayList<>();
+                    for (int j = 0; j < incorrectAnswersJSON.length(); j++) {
+                        incorrectAnswers.add(incorrectAnswersJSON.getString(j));
+                    }
+
+                    // Add everything to a Trivia object
+                    triviaItemsList.add(new Trivia(category, type, difficulty, question,
+                            correctAnswer, incorrectAnswers));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("onResponse error message.", e.getMessage());
+                    activity.gotTriviaError(e.getMessage());
+                }
+            }
+
+            // Return the ArrayList of Trivia objects to the gotTrivia function
             activity.gotTrivia(triviaItemsList);
         } else {
             activity.gotTriviaError("Unsuccesful Response!");

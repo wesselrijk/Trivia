@@ -25,7 +25,7 @@ public class Game implements Serializable {
     public int getCategory() {return this.category; }
     public String getDifficulty() {return this.difficulty; }
     public String getType() {return this.type; }
-    public String getEncoding() {return this.encoding; }
+    public String getEncoding() {return this.encoding; } // TODO remove later
     public Boolean getGameOver() {return this.gameOver; }
 
     // list of setters
