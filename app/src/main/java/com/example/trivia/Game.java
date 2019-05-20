@@ -17,6 +17,7 @@ public class Game implements Serializable {
         this.difficulty = null;
         this.type = null;
         this.encoding = null;
+        this.gameOver = false;
     }
 
     // list of getters

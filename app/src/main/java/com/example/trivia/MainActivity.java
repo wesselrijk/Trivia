@@ -1,5 +1,6 @@
 package com.example.trivia;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,13 +8,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    Game game;
+    private Game game;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +29,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         /* set all spinners using:
-        * https://developer.android.com/guide/topics/ui/controls/spinner#java */
+        * https://developer.android.com/guide/topics/ui/controls/spinner#java
+         * the first spinner is for the number of questions*/
         Spinner spinnerQuestionNumber = findViewById(R.id.spinnerQuestionsNumber);
         ArrayAdapter<Integer> adapterNumbers = new ArrayAdapter<Integer>(
                 this,
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinnerQuestionNumber.setSelection(9);
 
 
+        // Configure a spinner for the category
         Spinner spinnerCategory = findViewById(R.id.spinnerCategory);
         ArrayAdapter<CharSequence> adapterCategories = ArrayAdapter.createFromResource(this,
                 R.array.category_array, android.R.layout.simple_spinner_item);
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinnerCategory.setOnItemSelectedListener(this);
 
 
+        // Configure a spinner for the difficulty
         Spinner spinnerDifficulty = findViewById(R.id.spinnerDifficulty);
         ArrayAdapter<CharSequence> adapterDifficulty = ArrayAdapter.createFromResource(this,
                 R.array.difficulty_array, android.R.layout.simple_spinner_item);
@@ -55,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinnerDifficulty.setOnItemSelectedListener(this);
 
 
+        // Configure a spinner for the game type
         Spinner spinnerType = findViewById(R.id.spinnerType);
         ArrayAdapter<CharSequence> adapterType = ArrayAdapter.createFromResource(this,
                 R.array.type_array, android.R.layout.simple_spinner_item);
@@ -66,40 +73,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
         // An item was selected. You can retrieve the selected item using
+        // TODO remove all logs
         switch (parent.getId()) {
             case R.id.spinnerQuestionsNumber:
-                game.setQuestionsNumber(pos - 1);
+                game.setQuestionsNumber(pos + 1);
                 Log.d("selected", String.valueOf(game.getQuestionsNumber()));
+                break;
             case R.id.spinnerCategory:
                 game.setCategory(pos + 8);
                 Log.d("selected", String.valueOf(game.getCategory()));
+                break;
             case R.id.spinnerDifficulty:
-                String setDifficulty = parent.getItemAtPosition(pos).toString();
-                if (setDifficulty == "Easy") {
-                    game.setDifficulty("easy");
-                } else if (setDifficulty == "Medium") {
-                    game.setDifficulty("medium");
-                } else if (setDifficulty == "Hard") {
-                    game.setDifficulty("hard");
+                String[] difficulties = {null, "easy", "medium", "hard"};
+                game.setDifficulty(difficulties[pos]);
+                if (game.getDifficulty() != null) {
+                    Log.d("selected", game.getDifficulty());
                 }
-                Log.d("selected", game.getDifficulty());
+                break;
             case R.id.spinnerType:
-                String setType = parent.getItemAtPosition(pos).toString();
-                if (setType == "Multiple Choice") {
-                    game.setType("multiple");
-                } else if (setType == "True / False") {
-                    game.setType("boolean");
+                String[] types = {null, "multiple", "boolean"};
+                game.setType(types[pos]);
+                if (game.getType() == null) {
+                    Log.d("selected", "null");
+                } else {
+                    Log.d("selected", game.getType());
                 }
-                Log.d("selected", game.getType());
+                break;
         }
-
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+        Toast.makeText(this,"Nothing Selected", Toast.LENGTH_SHORT).show();
+
     }
 
     public void playClicked(View view) {
-
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        intent.putExtra("game_started", game);
+        startActivity(intent);
     }
 }
