@@ -8,16 +8,18 @@ public class Game implements Serializable {
     private int category;
     private String difficulty;
     private String type;
-    private String encoding;
     private Boolean gameOver;
+    private int score;
+    private String playerName;
 
     public Game() {
         this.questionsNumber = 10;
         this.category = 8;
         this.difficulty = null;
         this.type = null;
-        this.encoding = null;
         this.gameOver = false;
+        this.score = 0;
+        this.playerName = "AAA";
     }
 
     // list of getters
@@ -25,8 +27,9 @@ public class Game implements Serializable {
     public int getCategory() {return this.category; }
     public String getDifficulty() {return this.difficulty; }
     public String getType() {return this.type; }
-    public String getEncoding() {return this.encoding; } // TODO remove later
     public Boolean getGameOver() {return this.gameOver; }
+    public int getScore() { return  this.score; }
+    public String getPlayerName() { return this.playerName; }
 
     // list of setters
     public void setQuestionsNumber(int questionsNumber) {
@@ -39,10 +42,9 @@ public class Game implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
     public void setGameOver(Boolean gameOver) {
         this.gameOver = gameOver;
     }
+    public void setScore(int score) { this.score = score; }
+    public void setPlayerName(String playerName) {this.playerName = playerName; }
 }

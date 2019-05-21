@@ -1,7 +1,9 @@
 package com.example.trivia;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,11 +23,13 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
     private TextView category;
     private TextView typeDifficulty;
     private TextView question;
+    private TextView outOf;
     private Button button1;
     private Button button2;
     private Button button3;
     private Button button4;
-    private ArrayList<Trivia> trivaItemsList;
+    private ArrayList<Trivia> triviaItemsList;
+    private String correctAnswer;
     private int questionCounter = 0;
     private int score = 0;
 
@@ -38,6 +42,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         category = findViewById(R.id.categoryView);
         typeDifficulty = findViewById(R.id.typeDifficultyView);
         question = findViewById(R.id.questionView);
+        outOf = findViewById(R.id.outOfView);
         button1 = findViewById(R.id.button1);
         button2 = findViewById(R.id.button2);
         button3 = findViewById(R.id.button3);
@@ -53,23 +58,19 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         // Create a TriviaRequest using the created url
         TriviaRequest requestTrivia = new TriviaRequest(this);
         requestTrivia.getTrivia(this, url);
-    }
 
-
-    @Override
-    public void gotTrivia(ArrayList<Trivia> triviaItemsList) {
-        this.trivaItemsList = triviaItemsList;
         if (game.getCategory() == 8) {
             category.setText("Any Category");
         } else {
-            category.setText(triviaItemsList.get(0).getCategory());
+            String[] categories = getResources().getStringArray(R.array.category_array);
+            category.setText(categories[game.getCategory() - 8]);
         }
 
         String text = "";
         if (game.getDifficulty() == null){
             text += "Any Difficulty - ";
         } else {
-            text += capitalizeString(game.getDifficulty() + " Difficulty - ");
+            text += capitalizeString(game.getDifficulty()) + " Difficulty - ";
         }
         if (game.getType() == null) {
             text += "Any Type";
@@ -77,7 +78,14 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
             text += capitalizeString(game.getType());
         }
         typeDifficulty.setText(text);
+    }
 
+
+    @Override
+    public void gotTrivia(ArrayList<Trivia> triviaItemsList) {
+        this.triviaItemsList = triviaItemsList;
+        button1.setVisibility(View.VISIBLE);
+        button2.setVisibility(View.VISIBLE);
         nextTrivia();
     }
 
@@ -102,10 +110,16 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
 
     // Method for getting the next trivia
     private void nextTrivia() {
-        Log.d("questioncounter", String.valueOf(questionCounter));
-        Trivia trivia = trivaItemsList.get(questionCounter);
+
+        // Get the next trivia object from the list
+        Trivia trivia = triviaItemsList.get(questionCounter);
+
+        // Set some important views and variables
+        outOf.setText(String.valueOf(questionCounter + 1 + " / " + triviaItemsList.size()));
+        question.setText(android.text.Html.fromHtml(trivia.getQuestion()));
         int answersNumber = trivia.getIncorrectAnswers().size() + 1;
-        question.setText(trivia.getQuestion());
+        correctAnswer = trivia.getCorrectAnswer();
+
 
         /* Shuffle buttons randomly, from:
          * https://www.geeksforgeeks.org/collections-shuffle-java-examples/
@@ -125,12 +139,19 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         Collections.shuffle(buttonList);
         Log.d("button", String.valueOf(buttonList.get(0).getId()));
 
-        buttonList.get(0).setText(trivia.getCorrectAnswer());
-        buttonList.get(1).setText(trivia.getIncorrectAnswers().get(0));
+        // Reform answers from HTML and set them as text to buttons, set normal answers as tag
+        buttonList.get(0).setText(android.text.Html.fromHtml(trivia.getCorrectAnswer()));
+        buttonList.get(0).setTag(trivia.getCorrectAnswer());
+        buttonList.get(1).setText(android.text.Html.fromHtml(trivia.getIncorrectAnswers().get(0)));
+        buttonList.get(1).setTag(trivia.getIncorrectAnswers().get(0));
         if (answersNumber == 4) {
-            buttonList.get(2).setText(trivia.getIncorrectAnswers().get(1));
-            buttonList.get(3).setText(trivia.getIncorrectAnswers().get(2));
+            buttonList.get(2).setText(android.text.Html.fromHtml(trivia.getIncorrectAnswers().get(1)));
+            buttonList.get(2).setTag(trivia.getIncorrectAnswers().get(1));
+            buttonList.get(3).setText(android.text.Html.fromHtml(trivia.getIncorrectAnswers().get(2)));
+            buttonList.get(3).setTag(trivia.getIncorrectAnswers().get(2));
         }
+
+        // Add to the question counter
         questionCounter += 1;
     }
 
@@ -154,11 +175,27 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
 
     public void buttonClicked(View view) {
         Button buttonClicked = (Button) view;
+        Log.d("questioncounter1", String.valueOf(questionCounter)); // TODO search log and destroy
+        Log.d("score", String.valueOf(score) + " " + buttonClicked.getText() + " - " + correctAnswer);
 
-        if (buttonClicked.getText().equals(trivaItemsList.get(questionCounter).getCorrectAnswer())) {
+        // Count to the score if the clicked button has the correct answer
+        if (buttonClicked.getTag().equals(correctAnswer)) {
             score += 1;
         }
-        Log.d("score", String.valueOf(score) + " " + buttonClicked.getText() + " - " + trivaItemsList.get(questionCounter).getCorrectAnswer());
-        nextTrivia();
+        checkRemaining();
     }
+
+    private void checkRemaining() {
+        if (questionCounter == game.getQuestionsNumber()) {
+            game.setScore(score);
+            Intent intent = new Intent(GameActivity.this, HighscoreActivity.class);
+            intent.putExtra("game_finished", game);
+            startActivity(intent);
+            finish();
+        } else {
+            nextTrivia();
+        }
+    }
+
+
 }

@@ -2,7 +2,7 @@
 <resources>
     <string-array name="category_array">
         <item>Any Category</item>
-        <item>Generial Knowledge</item>
+        <item>General Knowledge</item>
         <item>Entertainment: Books</item>
         <item>Entertainment: Film</item>
         <item>Entertainment: Music</item>
