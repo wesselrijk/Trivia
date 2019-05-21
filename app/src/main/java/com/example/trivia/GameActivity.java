@@ -107,94 +107,30 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         int answersNumber = trivia.getIncorrectAnswers().size() + 1;
         question.setText(trivia.getQuestion());
 
-        /* Create random integers for buttons, from:
-        * https://www.geeksforgeeks.org/collections-shuffle-java-examples/
+        /* Shuffle buttons randomly, from:
+         * https://www.geeksforgeeks.org/collections-shuffle-java-examples/
          */
-        ArrayList<Integer> randomList = new ArrayList<>();
-        for (int i = 0; i < answersNumber; i++) {
-            randomList.add(i + 1);
-        }
-        Collections.shuffle(randomList);
-
-        // Set buttons to answers randomly
+        ArrayList<Button> buttonList = new ArrayList<>();
+        buttonList.add(button1);
+        buttonList.add(button2);
         if (answersNumber == 2) {
             button3.setVisibility(View.INVISIBLE);
             button4.setVisibility(View.INVISIBLE);
-            int button1Placement = randomList.get(0);
-            int button2Placement = randomList.get(1);
-            if (button1Placement == 1) {
-                button1.setText(trivia.getCorrectAnswer());
-            } else {
-                button1.setText(trivia.getIncorrectAnswers().get(0));
-            }
-            if (button2Placement == 1) {
-                button2.setText(trivia.getCorrectAnswer());
-            } else {
-                button2.setText(trivia.getIncorrectAnswers().get(0));
-            }
         } else {
-            int button1Placement = randomList.get(0);
-            int button2Placement = randomList.get(1);
-            int button3Placement = randomList.get(2);
-            int button4Placement = randomList.get(3);
-            switch (button1Placement) {
-                case 1:
-                    button1.setText(trivia.getCorrectAnswer());
-                    break;
-                case 2:
-                    button1.setText(trivia.getIncorrectAnswers().get(0));
-                    break;
-                case 3:
-                    button1.setText(trivia.getIncorrectAnswers().get(1));
-                    break;
-                case 4:
-                    button1.setText(trivia.getIncorrectAnswers().get(2));
-                    break;
-            }
-            switch (button2Placement) {
-                case 1:
-                    button2.setText(trivia.getCorrectAnswer());
-                    break;
-                case 2:
-                    button2.setText(trivia.getIncorrectAnswers().get(0));
-                    break;
-                case 3:
-                    button2.setText(trivia.getIncorrectAnswers().get(1));
-                    break;
-                case 4:
-                    button2.setText(trivia.getIncorrectAnswers().get(2));
-                    break;
-            }
-            switch (button3Placement) {
-                case 1:
-                    button3.setText(trivia.getCorrectAnswer());
-                    break;
-                case 2:
-                    button3.setText(trivia.getIncorrectAnswers().get(0));
-                    break;
-                case 3:
-                    button3.setText(trivia.getIncorrectAnswers().get(1));
-                    break;
-                case 4:
-                    button3.setText(trivia.getIncorrectAnswers().get(2));
-                    break;
-            }
-            switch (button4Placement) {
-                case 1:
-                    button4.setText(trivia.getCorrectAnswer());
-                    break;
-                case 2:
-                    button4.setText(trivia.getIncorrectAnswers().get(0));
-                    break;
-                case 3:
-                    button4.setText(trivia.getIncorrectAnswers().get(1));
-                    break;
-                case 4:
-                    button4.setText(trivia.getIncorrectAnswers().get(2));
-                    break;
-            }
+            button3.setVisibility(View.VISIBLE);
+            button4.setVisibility(View.VISIBLE);
+            buttonList.add(button3);
+            buttonList.add(button4);
         }
+        Collections.shuffle(buttonList);
+        Log.d("button", String.valueOf(buttonList.get(0).getId()));
 
+        buttonList.get(0).setText(trivia.getCorrectAnswer());
+        buttonList.get(1).setText(trivia.getIncorrectAnswers().get(0));
+        if (answersNumber == 4) {
+            buttonList.get(2).setText(trivia.getIncorrectAnswers().get(1));
+            buttonList.get(3).setText(trivia.getIncorrectAnswers().get(2));
+        }
         questionCounter += 1;
     }
 
@@ -217,5 +153,12 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
     }
 
     public void buttonClicked(View view) {
+        Button buttonClicked = (Button) view;
+
+        if (buttonClicked.getText().equals(trivaItemsList.get(questionCounter).getCorrectAnswer())) {
+            score += 1;
+        }
+        Log.d("score", String.valueOf(score) + " " + buttonClicked.getText() + " - " + trivaItemsList.get(questionCounter).getCorrectAnswer());
+        nextTrivia();
     }
 }
