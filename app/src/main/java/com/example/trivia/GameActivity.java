@@ -1,9 +1,7 @@
 package com.example.trivia;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements TriviaRequest.Callback {
 
@@ -39,7 +36,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         setContentView(R.layout.activity_game);
 
         // Get all views from the layout
-        category = findViewById(R.id.categoryView);
+        category = findViewById(R.id.infoView);
         typeDifficulty = findViewById(R.id.typeDifficultyView);
         question = findViewById(R.id.questionView);
         outOf = findViewById(R.id.outOfView);
@@ -94,19 +91,6 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    // Method for capitalizing string's first letter
-    private String capitalizeString(String string) {
-        String[] names = string.split("\\s+");
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < names.length; i++) {
-            if (i != 0) {
-                sb.append(' ');
-            }
-            sb.append(Character.toUpperCase(names[i].charAt(0)));
-            sb.append(names[i].substring(1).toLowerCase());
-        }
-        return sb.toString();
-    }
 
     // Method for getting the next trivia
     private void nextTrivia() {
@@ -188,7 +172,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
     private void checkRemaining() {
         if (questionCounter == game.getQuestionsNumber()) {
             game.setScore(score);
-            Intent intent = new Intent(GameActivity.this, HighscoreActivity.class);
+            Intent intent = new Intent(GameActivity.this, HighScoreActivity.class);
             intent.putExtra("game_finished", game);
             startActivity(intent);
             finish();
@@ -197,5 +181,17 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         }
     }
 
-
+    // Method for capitalizing string's first letter
+    private String capitalizeString(String string) {
+        String[] names = string.split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < names.length; i++) {
+            if (i != 0) {
+                sb.append(' ');
+            }
+            sb.append(Character.toUpperCase(names[i].charAt(0)));
+            sb.append(names[i].substring(1).toLowerCase());
+        }
+        return sb.toString();
+    }
 }
