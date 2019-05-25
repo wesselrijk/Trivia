@@ -31,7 +31,9 @@ public class HighScoreAdapter extends ArrayAdapter<Score> {
         }
 
         TextView playerView = convertView.findViewById(R.id.playerView);
-        TextView infoView = convertView.findViewById(R.id.infoView);
+        TextView difficultyView = convertView.findViewById(R.id.difficultyView);
+        TextView categoryView = convertView.findViewById(R.id.categoryView);
+        TextView typeView = convertView.findViewById(R.id.typeView);
         TextView scoreView = convertView.findViewById(R.id.scoreView);
 
         Score current = highScoreItemList.get(position);
@@ -40,23 +42,21 @@ public class HighScoreAdapter extends ArrayAdapter<Score> {
         scoreView.setText(current.getScore() + " / " + current.getQuestions());
 
         // Generate a string for the infotext
-        String infoText = capitalizeString(current.getDifficulty()) + " Difficulty - ";
+        difficultyView.setText(capitalizeString(current.getDifficulty()) + " Difficulty");
 
         String[] categories = context.getResources().getStringArray(R.array.category_array);
-        infoText += categories[Integer.parseInt(current.getCategory()) - 8];
+        categoryView.setText(categories[Integer.parseInt(current.getCategory()) - 8]);
         switch(current.getType()) {
             case "any":
-                infoText += " - Any Type";
+                typeView.setText("Any Type");
                 break;
             case "multiple":
-                infoText += " - Multiple Choice";
+                typeView.setText("Multiple Choice");
                 break;
             case "boolean":
-                infoText += " - True / False";
+                typeView.setText("True / False");
                 break;
         }
-
-        infoView.setText(infoText);
 
         return convertView;
     }

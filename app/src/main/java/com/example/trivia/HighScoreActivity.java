@@ -85,7 +85,7 @@ public class HighScoreActivity extends AppCompatActivity implements HighScoreGet
 
     private void postRequest() {
         // String url = "https://127.0.0.1:5000/list";
-        String url = "http://ec2-18-223-151-29.us-east-2.compute.amazonaws.com:8080/list";
+        String url = "http://ec2-18-222-174-66.us-east-2.compute.amazonaws.com:8080/list";
         RequestQueue queue = Volley.newRequestQueue(this);
         HighScorePostRequest requestPostHighScores = new HighScorePostRequest(Request.Method.POST, url, this, this, game);
         queue.add(requestPostHighScores);

@@ -7,7 +7,7 @@
     android:background="#AE6180A0">
 
     <TextView
-        android:id="@+id/infoView"
+        android:id="@+id/difficultyView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -30,7 +30,7 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infoView" />
+        app:layout_constraintTop_toBottomOf="@+id/difficultyView" />
 
     <View
         android:id="@+id/view3"

@@ -36,7 +36,7 @@ public class GameActivity extends AppCompatActivity implements TriviaRequest.Cal
         setContentView(R.layout.activity_game);
 
         // Get all views from the layout
-        category = findViewById(R.id.infoView);
+        category = findViewById(R.id.difficultyView);
         typeDifficulty = findViewById(R.id.typeDifficultyView);
         question = findViewById(R.id.questionView);
         outOf = findViewById(R.id.outOfView);
