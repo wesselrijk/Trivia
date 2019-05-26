@@ -1,7 +1,13 @@
 package com.example.trivia;
+/**
+ * The HighScoreGetRequest class for the app.
+ * This is the class that handles a JsonObjectRequest coming from the HighScoreActivity. This
+ * request asks for a list of highscores and returns it to the HighScoreActivity if successful. If
+ * not successful, error messages will be returned to the MainActivity.
+ */
 
+// List of imports.
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,9 +36,11 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
         void gotTriviaError(String message);
     }
 
-    // A method that gets the Trivia objects from a JSON request
+    // Method called to execute a GET request from the server, also sets activity.
     public void getTrivia(Callback activity, String url) {
         this.activity = activity;
+
+        // Create a request queue and sets a request for trivia to the queue.
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 url, null, this,
@@ -40,14 +48,13 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
         queue.add(jsonObjectRequest);
     }
 
-    // Handle a VolleyError response
+    // Method called when there is an unsuccessful response from the server.
     @Override
     public void onErrorResponse(VolleyError error) {
         activity.gotTriviaError(error.toString());
-        Log.d("Volley error message.",error.toString());
     }
 
-    // Handle a successful response
+    // Method called when there is a successful response from the server.
     @Override
     public void onResponse(JSONObject response) {
 
@@ -101,7 +108,7 @@ public class TriviaRequest implements Response.Listener<JSONObject>, Response.Er
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.d("onResponse error message.", e.getMessage());
+
                     activity.gotTriviaError(e.getMessage());
                 }
             }

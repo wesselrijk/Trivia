@@ -1,7 +1,13 @@
 package com.example.trivia;
+/**
+ * The HighScoreGetRequest class for the app.
+ * This is the class that handles a JsonObjectRequest coming from the HighScoreActivity. This
+ * request asks for a list of highscores and returns it to the HighScoreActivity if successful. If
+ * not successful, error messages will be returned to the MainActivity.
+ */
 
+// List of imports.
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,62 +27,48 @@ public class HighScoreGetRequest implements Response.Listener<JSONArray>, Respon
     private Context context;
     private Callback activity;
 
+    // Constructor sets context.
     public HighScoreGetRequest(Context context) {
         this.context = context;
     }
 
+    // Callback method for the MainActivity.
     public interface Callback {
         void gotHighScores(ArrayList<Score> pastGameStates);
         void gotHighScoresError(String message);
     }
 
+    // Method called to execute a GET request from the server, also sets activity.
     public void getScores(Callback activity, String url) {
         this.activity = activity;
+
+        // Create a request queue and sets a request for highscores to the queue.
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET,
                 url, null, this, this);
         queue.add(jsonObjectRequest);
     }
 
+    // Method called when there is an unsuccessful response from the server.
     @Override
     public void onErrorResponse(VolleyError error) {
+
+        // Returns error to the activity.
         activity.gotHighScoresError(error.toString());
-        Log.d("Volley error message.",error.toString());
     }
 
+    // Method called when there is a successful response from the server.
     @Override
     public void onResponse(JSONArray response) {
 
-//        JSONObject value = null;
-//        try {
-//            value = response.getJSONObject(0);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            activity.gotHighScoresError(e.getMessage());
-//        }
-//
-//        JSONArray highScoreItems = null;
-//
-//        try {
-//            highScoreItems = value.getJSONArray("label");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            activity.gotHighScoresError(e.getMessage());
-//        }
-//
-//        try {
-//            Log.d("tag", value.toString(4));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        // Create an ArrayList to store all past Game objects
+        // Create an ArrayList to store all past Game objects.
         ArrayList<Score> highScoreItemList = new ArrayList<>();
 
-        // Iterate over the results of the response
+        // Iterate over the results of the response.
         for (int i = 0; i < response.length(); i++) {
             try {
 
-                // Get all necessary variables from the results
+                // Get all necessary variables from the results.
                 JSONObject highScoreJSON = response.getJSONObject(i);
                 String difficulty = highScoreJSON.getString("difficulty");
                 String score = highScoreJSON.getString("score");
@@ -87,13 +79,14 @@ public class HighScoreGetRequest implements Response.Listener<JSONArray>, Respon
 
                 highScoreItemList.add(new Score(difficulty, score, questions, category, type,
                         player));
-
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.d("onResponse error message.", e.getMessage());
+
+                // Returns error to the activity.
                 activity.gotHighScoresError(e.getMessage());
             }
         }
+
         activity.gotHighScores(highScoreItemList);
     }
 }

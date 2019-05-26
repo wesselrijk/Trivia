@@ -1,4 +1,9 @@
 package com.example.trivia;
+/**
+ * The HighScoreAdapter adapter for the app.
+ * The adapter is set to a ListView in the activity_scores. Then the adapter will fill in the items
+ * in the list of the ListView with information it is being fed from the database.
+ */
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,13 +19,14 @@ public class HighScoreAdapter extends ArrayAdapter<Score> {
     Context context;
     ArrayList<Score> highScoreItemList;
 
+    // Constructor sets variables.
     public HighScoreAdapter(Context context, int layout, ArrayList<Score> objects) {
         super(context, layout, objects);
         this.context = context;
         this.highScoreItemList = objects;
     }
 
-    // an override method used to fill in the items of the GridView of the activity_main layout
+    // An override method used to fill in the items of the GridView of the activity_main layout
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -41,9 +47,9 @@ public class HighScoreAdapter extends ArrayAdapter<Score> {
         playerView.setText(current.getPlayerName());
         scoreView.setText(current.getScore() + " / " + current.getQuestions());
 
-        // Generate a string for the infotext
         difficultyView.setText(capitalizeString(current.getDifficulty()) + " Difficulty");
 
+        // Get the right category from the category_array.
         String[] categories = context.getResources().getStringArray(R.array.category_array);
         categoryView.setText(categories[Integer.parseInt(current.getCategory()) - 8]);
         switch(current.getType()) {
